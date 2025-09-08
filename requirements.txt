@@ -1,12 +1,12 @@
 streamlit
-python-dotenv
-langchain
-langchain-openai
-langchain-community
+langchain==0.1.99
+langchain_community
 chromadb==0.3.27
+pydantic<2.0,>=1.10.9
 duckdb
 pypdf
 tiktoken
 openai
+
 
 
