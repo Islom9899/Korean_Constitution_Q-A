@@ -1,4 +1,6 @@
 헌법 Q&A 챗봇 💬📚
+### 💡 Preview
+![Preview Image](preview.png)
 본 프로젝트는 개인적으로 개발한 RAG(Retrieval-Augmented Generation) 기반 인공지능 챗봇으로, 대한민국 헌법 PDF 데이터를 기반으로 질의응답 기능을 제공합니다.
 LangChain 프레임워크와 OpenAI 모델을 활용하여, 헌법 관련 질문에 대해 정확하고 맥락을 반영한 답변을 생성하도록 설계되었습니다.
 📌 주요 기능
@@ -17,7 +19,8 @@ Vector DB: ChromaDB
 -----------------------------------------------------------
 -----------------------------------------------------------
 Constitution Q&A Chatbot 💬📚
-
+### 💡 Preview
+![Preview Image](preview.png)
 This project is an individually developed AI-powered chatbot utilizing Retrieval-Augmented Generation (RAG) to provide question-answering functionality based on the Constitution of the Republic of Korea.
 Leveraging the LangChain framework and OpenAI models, it is designed to generate accurate and context-aware answers to constitutional queries.
 📌 Key Features
