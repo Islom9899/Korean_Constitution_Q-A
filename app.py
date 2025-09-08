@@ -11,7 +11,13 @@ from langchain_community.chat_message_histories.streamlit import StreamlitChatMe
 import os
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 
-load_dotenv()
+openai_api_key = st.secrets["openai"]["api_key"]
+os.environ['OPENAI_API_KEY'] = openai_api_key
+
+# LangChain API parametrlari
+lc_api_key = st.secrets["langchain"]["api_key"]
+lc_endpoint = st.secrets["langchain"]["endpoint"]
+lc_project = st.secrets["langchain"]["project"]
 
 @st.cache_resource # 한번 실행한 결과를 캐싱해서 재실행시 빠르게 로드
 def loader_and_split_pdf(file_path):
