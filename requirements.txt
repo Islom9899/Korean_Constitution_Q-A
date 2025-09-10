@@ -9,6 +9,8 @@ tiktoken
 openai
 duckdb
 deep-translator
+faiss-cpu==1.7.4
+
 
 
 
