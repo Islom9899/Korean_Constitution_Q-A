@@ -14,6 +14,16 @@ from langchain.chains import create_history_aware_retriever, create_retrieval_ch
 
 load_dotenv()
 
+# Environment variables (local or secrets)
+LANGCHAIN_TRACING_V2 = os.getenv("LANGCHAIN_TRACING_V2", "false")
+LANGCHAIN_ENDPOINT = os.getenv("LANGCHAIN_ENDPOINT")
+LANGCHAIN_API_KEY = os.getenv("LANGCHAIN_API_KEY")
+LANGCHAIN_PROJECT = os.getenv("LANGCHAIN_PROJECT")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+# OpenAI API keyni os.environ orqali o‘rnatish
+os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
+
 @st.cache_resource # 한번 실행한 결과를 캐싱해서 재실행시 빠르게 로드
 def loader_and_split_pdf(file_path):
     """PDF 로드 함수"""
