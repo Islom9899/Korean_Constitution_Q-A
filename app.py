@@ -1,23 +1,18 @@
 import streamlit as st
 from dotenv import load_dotenv
-from langchain.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings,ChatOpenAI
-from langchain.vectorstores import Chroma
+from langchain_community.vectorstores import Chroma
 from langchain.prompts import ChatPromptTemplate,MessagesPlaceholder
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_community.chat_message_histories.streamlit import StreamlitChatMessageHistory
 import os
+from deep_translator import GoogleTranslator
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 
-openai_api_key = st.secrets["openai"]["api_key"]
-os.environ['OPENAI_API_KEY'] = openai_api_key
-
-# LangChain API parametrlari
-lc_api_key = st.secrets["langchain"]["api_key"]
-lc_endpoint = st.secrets["langchain"]["endpoint"]
-lc_project = st.secrets["langchain"]["project"]
+load_dotenv()
 
 @st.cache_resource # 한번 실행한 결과를 캐싱해서 재실행시 빠르게 로드
 def loader_and_split_pdf(file_path):
@@ -100,40 +95,77 @@ def initialize_components(selected_model):
     return rag_chain
 # -----------------------
 # Streamlit UI
-st.header('헌법 Q&A 챗봇 💬 📚')
-
-option = st.selectbox('Select GPT Model', ('gpt-4o-mini', 'gpt-3.5-turbo'))
+st.sidebar.header("⚙️ Settings")
+language = st.sidebar.selectbox("🌍 Language", ("한국어", "English", "Oʻzbekcha"))
+option = st.sidebar.selectbox("🤖 Select Model", ("gpt-4o-mini", "gpt-3.5-turbo"))
 rag_chain = initialize_components(option)
-chat_history = StreamlitChatMessageHistory(key='chat_messages')
+
+chat_history = StreamlitChatMessageHistory(key="chat_messages")
 
 conversational_rag_chain = RunnableWithMessageHistory(
     rag_chain,
     lambda session_id: chat_history,
-    input_messages_key='input',
-    history_messages_key='history',
-    output_messages_key='answer',
+    input_messages_key="input",
+    history_messages_key="history",
+    output_messages_key="answer",
 )
 
-if 'messages' not in st.session_state:
-    st.session_state['messages'] = [
-        {'role': 'assistant',
-         'content': '한법에 대해 무엇이든 물어보세요!'}
+# ----------------------
+# Translate Helper
+# ----------------------
+def translate_text(text, src, tgt):
+    try:
+        return GoogleTranslator(source=src, target=tgt).translate(text)
+    except:
+        return text
+
+# ----------------------
+# UI Header
+# ----------------------
+st.title("헌법 Q&A Chatbot 💬📘")
+st.write("Ask questions about the Korean Constitution in **Korean, English, or Uzbek**.")
+
+if "messages" not in st.session_state:
+    st.session_state["messages"] = [
+        {"role": "assistant", "content": "헌법에 대해 무엇이든 물어보세요! (Ask me anything about the Constitution)"}
     ]
-    
+
+# ----------------------
+# Chat Display
+# ----------------------
 for msg in chat_history.messages:
     st.chat_message(msg.type).write(msg.content)
+
+if prompt_message := st.chat_input("Your question..."):
+    # Detect source language
+    src_lang = "auto"
+    tgt_lang = "ko"  # Always query in Korean
     
-if prompt_message := st.chat_input('Your question'):
-    st.chat_message('human').write(prompt_message)
-    with st.chat_message('ai'):
-        with st.spinner('Thinking...'):
-            config = {'configurable': {'session_id': 'any'}}
-            response = conversational_rag_chain.invoke(
-                {'input': prompt_message},
-                config=config
-            )
-            answer = response['answer']
+    translated_question = translate_text(prompt_message, src_lang, tgt_lang)
+
+    st.chat_message("human").write(prompt_message)
+
+    with st.chat_message("ai"):
+        with st.spinner("Thinking..."):
+            config = {"configurable": {"session_id": "any"}}
+            response = conversational_rag_chain.invoke({"input": translated_question}, config=config)
+
+            # Translate back to selected language
+            answer = response["answer"]
+            if language == "English":
+                answer = translate_text(answer, "ko", "en")
+            elif language == "Oʻzbekcha":
+                answer = translate_text(answer, "ko", "uz")
+
             st.write(answer)
-            with st.expander('참고 문서 확인'):
-                for doc in response['context']:
-                    st.markdown(doc.metadata['source'], help=doc.page_content)
+
+            with st.expander("📄 Sources"):
+                for doc in response["context"]:
+                    st.markdown(f"**Source:** {doc.metadata['source']}", help=doc.page_content)
+
+# ----------------------
+# Download Q&A History
+# ----------------------
+if st.sidebar.button("⬇️ Download Chat"):
+    history_text = "\n".join([f"{m.type.upper()}: {m.content}" for m in chat_history.messages])
+    st.sidebar.download_button("Download Q&A as TXT", history_text, file_name="chat_history.txt")
