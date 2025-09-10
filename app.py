@@ -31,10 +31,9 @@ def create_vector_store(_docs):
     """텍스트 청크들을 임베딩 벡터로 저장"""
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000,chunk_overlap=0)
     split_docs = text_splitter.split_documents(_docs)
-    persist_directory = './chroma_db'
     vectorstore = FAISS.from_documents(
-    split_docs,
-    OpenAIEmbeddings(model='text-embedding-3-small')
+        split_docs,
+        OpenAIEmbeddings(model='text-embedding-3-small')
     )
     return vectorstore
 
