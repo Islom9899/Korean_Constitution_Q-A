@@ -9,6 +9,7 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_community.chat_message_histories.streamlit import StreamlitChatMessageHistory
 import os
+from langchain.vectorstores import FAISS
 from deep_translator import GoogleTranslator
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 
@@ -31,9 +32,10 @@ def create_vector_store(_docs):
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000,chunk_overlap=0)
     split_docs = text_splitter.split_documents(_docs)
     persist_directory = './chroma_db'
-    vectorstore = Chroma.from_documents(split_docs,OpenAIEmbeddings(model='text-embedding-3-small'),
-                                        persist_directory=None
-                                        )
+    vectorstore = FAISS.from_documents(
+    split_docs,
+    OpenAIEmbeddings(model='text-embedding-3-small')
+    )
     return vectorstore
 
 @st.cache_resource
