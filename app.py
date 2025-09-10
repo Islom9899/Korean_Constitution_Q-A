@@ -32,7 +32,7 @@ def create_vector_store(_docs):
     split_docs = text_splitter.split_documents(_docs)
     persist_directory = './chroma_db'
     vectorstore = Chroma.from_documents(split_docs,OpenAIEmbeddings(model='text-embedding-3-small'),
-                                        persist_directory=persist_directory
+                                        persist_directory=None
                                         )
     return vectorstore
 
