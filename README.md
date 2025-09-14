@@ -3,7 +3,7 @@
 AI-powered **multilingual chatbot** that answers questions about the **Constitution of the Republic of Korea** using **Retrieval-Augmented Generation (RAG)**.  
 Built with **LangChain, OpenAI GPT API, FAISS/ChromaDB, Deep Translator, and Streamlit** for accurate, context-aware, and multilingual responses.  
 
-🌐 [Live Demo](https://koreanconstitution-a.streamlit.app/)  
+🌐 [Live Demo](https://koreanconstitutionq-a.streamlit.app/)  
 
 ---
 
@@ -39,3 +39,16 @@ Korean_Constitution_Q-A/
 │── README.md            # Documentation
 │── data/                # Constitution PDFs
 │── vectorstore/         # FAISS / ChromaDB index
+
+---
+
+# 🚀 Getting Started
+## Clone the repository
+git clone https://github.com/your-username/Korean_Constitution_Q-A.git
+cd Korean_Constitution_Q-A
+
+
+
+
+
+
