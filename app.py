@@ -102,7 +102,7 @@ def initialize_components(selected_model):
 # -----------------------
 # Streamlit UI
 st.sidebar.header("⚙️ Settings")
-language = st.sidebar.selectbox("🌍 Language", ("한국어", "English", "Oʻzbekcha"))
+language = st.sidebar.selectbox("🌍 Language", ("한국어", "English", "Uzbek tili"))
 option = st.sidebar.selectbox("🤖 Select Model", ("gpt-4o-mini", "gpt-3.5-turbo"))
 rag_chain = initialize_components(option)
 
