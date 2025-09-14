@@ -39,5 +39,3 @@ Korean_Constitution_Q-A/
 │── README.md            # Documentation
 │── data/                # Constitution PDFs
 │── vectorstore/         # FAISS / ChromaDB index
-│── preview.png          # Screenshot
-
